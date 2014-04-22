@@ -25,7 +25,7 @@ public class GooglePlayServicesActivity extends Activity implements
 
     private static final String KEY_IN_RESOLUTION = "is_in_resolution";
 
-    /**
+    /**  TEST CHECKIN, REMOVE
      * Request code for auto Google Play Services error resolution.
      */
     protected static final int REQUEST_CODE_RESOLUTION = 1;
