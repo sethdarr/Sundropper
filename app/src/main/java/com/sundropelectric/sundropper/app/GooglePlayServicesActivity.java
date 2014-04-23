@@ -13,7 +13,16 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import com.google.android.gms.cast.Cast;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.drive.Contents;
 import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveFile;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.DriveResource;
+import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.wallet.Wallet;
 
@@ -25,7 +34,7 @@ public class GooglePlayServicesActivity extends Activity implements
 
     private static final String KEY_IN_RESOLUTION = "is_in_resolution";
 
-    /**  TEST CHECKIN, REMOVE
+    /**
      * Request code for auto Google Play Services error resolution.
      */
     protected static final int REQUEST_CODE_RESOLUTION = 1;
@@ -40,6 +49,38 @@ public class GooglePlayServicesActivity extends Activity implements
      * waiting for resolution intent to return.
      */
     private boolean mIsInResolution;
+
+    DriveFile file = new DriveFile() {
+        @Override
+        public PendingResult<DriveApi.ContentsResult> openContents(GoogleApiClient googleApiClient, int i, DownloadProgressListener downloadProgressListener) {
+            return null;
+        }
+
+        @Override
+        public PendingResult<Status> commitAndCloseContents(GoogleApiClient googleApiClient, Contents contents) {
+            return null;
+        }
+
+        @Override
+        public PendingResult<Status> discardContents(GoogleApiClient googleApiClient, Contents contents) {
+            return null;
+        }
+
+        @Override
+        public PendingResult<MetadataResult> getMetadata(GoogleApiClient googleApiClient) {
+            return null;
+        }
+
+        @Override
+        public PendingResult<MetadataResult> updateMetadata(GoogleApiClient googleApiClient, MetadataChangeSet metadataChangeSet) {
+            return null;
+        }
+
+        @Override
+        public DriveId getDriveId() {
+            return null;
+        }
+    };
 
     /**
      * Called when the activity is starting. Restores the activity state.
@@ -64,12 +105,12 @@ public class GooglePlayServicesActivity extends Activity implements
         super.onStart();
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(Cast.API)
+                    //.addApi(Cast.API)
                     .addApi(Drive.API)
-                    .addApi(Plus.API)
-                    .addApi(Wallet.API)
+                    //.addApi(Plus.API)
+                    //.addApi(Wallet.API)
                     .addScope(Drive.SCOPE_FILE)
-                    .addScope(Plus.SCOPE_PLUS_LOGIN)
+                    //.addScope(Plus.SCOPE_PLUS_LOGIN)
                     // Optionally, add additional APIs and scopes if required.
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
@@ -119,6 +160,20 @@ public class GooglePlayServicesActivity extends Activity implements
         }
     }
 
+    ResultCallback<DriveApi.ContentsResult> contentsOpenedCallback =
+            new ResultCallback<DriveApi.ContentsResult>() {
+                @Override
+                public void onResult(DriveApi.ContentsResult result) {
+                    if (!result.getStatus().isSuccess()) {
+                        // display an error saying file can't be opened
+                        return;
+                    }
+                    // Contents object contains pointers
+                    // to the actual byte stream
+                    Contents contents = result.getContents();
+                }
+            };
+
     /**
      * Called when {@code mGoogleApiClient} is connected.
      */
@@ -126,6 +181,9 @@ public class GooglePlayServicesActivity extends Activity implements
     public void onConnected(Bundle connectionHint) {
         Log.i(TAG, "GoogleApiClient connected");
         // TODO: Start making API requests.
+
+        file.openContents(mGoogleApiClient, DriveFile.MODE_READ_ONLY, null).setResultCallback(contentsOpenedCallback);
+
     }
 
     /**
