@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -23,8 +25,11 @@ import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.DriveResource;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.wallet.Wallet;
+
+import static com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable;
 
 public class GooglePlayServicesActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -50,44 +55,13 @@ public class GooglePlayServicesActivity extends Activity implements
      */
     private boolean mIsInResolution;
 
-    DriveFile file = new DriveFile() {
-        @Override
-        public PendingResult<DriveApi.ContentsResult> openContents(GoogleApiClient googleApiClient, int i, DownloadProgressListener downloadProgressListener) {
-            return null;
-        }
-
-        @Override
-        public PendingResult<Status> commitAndCloseContents(GoogleApiClient googleApiClient, Contents contents) {
-            return null;
-        }
-
-        @Override
-        public PendingResult<Status> discardContents(GoogleApiClient googleApiClient, Contents contents) {
-            return null;
-        }
-
-        @Override
-        public PendingResult<MetadataResult> getMetadata(GoogleApiClient googleApiClient) {
-            return null;
-        }
-
-        @Override
-        public PendingResult<MetadataResult> updateMetadata(GoogleApiClient googleApiClient, MetadataChangeSet metadataChangeSet) {
-            return null;
-        }
-
-        @Override
-        public DriveId getDriveId() {
-            return null;
-        }
-    };
-
     /**
      * Called when the activity is starting. Restores the activity state.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (savedInstanceState != null) {
             mIsInResolution = savedInstanceState.getBoolean(KEY_IN_RESOLUTION, false);
         }
@@ -103,20 +77,25 @@ public class GooglePlayServicesActivity extends Activity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if (mGoogleApiClient == null) {
+
+        if (isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
+            Toast.makeText(this, "Google Play Services are not available on this device.  Aborting...", Toast.LENGTH_LONG).show();
+            finish();
+        } else if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     //.addApi(Cast.API)
                     .addApi(Drive.API)
-                    //.addApi(Plus.API)
-                    //.addApi(Wallet.API)
+                            //.addApi(Plus.API)
+                            //.addApi(Wallet.API)
                     .addScope(Drive.SCOPE_FILE)
-                    //.addScope(Plus.SCOPE_PLUS_LOGIN)
-                    // Optionally, add additional APIs and scopes if required.
+                            //.addScope(Plus.SCOPE_PLUS_LOGIN)
+                            // Optionally, add additional APIs and scopes if required.
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .build();
+            mGoogleApiClient.connect();
+
         }
-        mGoogleApiClient.connect();
     }
 
     /**
@@ -145,12 +124,25 @@ public class GooglePlayServicesActivity extends Activity implements
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+
         switch (requestCode) {
-        case REQUEST_CODE_RESOLUTION:
-            retryConnecting();
-            break;
+            case REQUEST_CODE_RESOLUTION:
+                if (resultCode == RESULT_OK && !mIsInResolution) {
+                    DriveId driveId = (DriveId) data.getParcelableExtra(
+                            OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                    String msg = "Selected file's ID: " + driveId;
+                    Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+                    Log.i(TAG, msg);
+                    finish();
+                    break;
+                }
+
+                retryConnecting();
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
+
     }
 
     private void retryConnecting() {
@@ -182,8 +174,19 @@ public class GooglePlayServicesActivity extends Activity implements
         Log.i(TAG, "GoogleApiClient connected");
         // TODO: Start making API requests.
 
-        file.openContents(mGoogleApiClient, DriveFile.MODE_READ_ONLY, null).setResultCallback(contentsOpenedCallback);
+        //       file.openContents(mGoogleApiClient, DriveFile.MODE_READ_ONLY, null).setResultCallback(contentsOpenedCallback);
+        IntentSender intentSender = Drive.DriveApi
+                .newOpenFileActivityBuilder()
 
+                .setMimeType(new String[]{"audio/mpeg", "application/vnd.google-apps.document"})
+                .build(mGoogleApiClient);
+
+        try {
+            startIntentSenderForResult(
+                    intentSender, REQUEST_CODE_RESOLUTION, null, 0, 0, 0);
+        } catch (SendIntentException e) {
+            Log.w(TAG, "Unable to send intent", e);
+        }
     }
 
     /**
@@ -207,11 +210,12 @@ public class GooglePlayServicesActivity extends Activity implements
             // Show a localized error dialog.
             GooglePlayServicesUtil.getErrorDialog(
                     result.getErrorCode(), this, 0, new OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    retryConnecting();
-                }
-            }).show();
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            retryConnecting();
+                        }
+                    }
+            ).show();
             return;
         }
         // If there is an existing resolution error being displayed or a resolution
