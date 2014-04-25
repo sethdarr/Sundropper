@@ -85,10 +85,10 @@ public class GooglePlayServicesActivity extends Activity implements
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     //.addApi(Cast.API)
                     .addApi(Drive.API)
-                            //.addApi(Plus.API)
+                    .addApi(Plus.API)
                             //.addApi(Wallet.API)
                     .addScope(Drive.SCOPE_FILE)
-                            //.addScope(Plus.SCOPE_PLUS_LOGIN)
+                    .addScope(Plus.SCOPE_PLUS_LOGIN)
                             // Optionally, add additional APIs and scopes if required.
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
