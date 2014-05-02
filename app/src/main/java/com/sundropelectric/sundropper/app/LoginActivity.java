@@ -3,6 +3,7 @@ package com.sundropelectric.sundropper.app;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -29,12 +30,28 @@ public class LoginActivity extends PlusBaseActivity {
     private SignInButton mPlusSignInButton;
     private View mSignOutButtons;
     private View mLoginFormView;
+    private boolean loginButtonClicked = false;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        InitializeLogin();
+        updateConnectButtonState();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+  //      InitializeLogin();
+    }
 
+    private void InitializeLogin() {
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
         if (supportsGooglePlayServices()) {
@@ -42,6 +59,7 @@ public class LoginActivity extends PlusBaseActivity {
             mPlusSignInButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    loginButtonClicked = true;
                     signIn();
                 }
             });
@@ -61,23 +79,7 @@ public class LoginActivity extends PlusBaseActivity {
     @Override
     protected void onPlusClientSignIn() {
 
-//        startActivity(new Intent(this, GooglePlayServicesActivity.class));
-
-        //Set up sign out and disconnect buttons.
-        Button signOutButton = (Button) findViewById(R.id.plus_sign_out_button);
-        signOutButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signOut();
-            }
-        });
-        Button disconnectButton = (Button) findViewById(R.id.plus_disconnect_button);
-        disconnectButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                revokeAccess();
-            }
-        });
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     @Override
