@@ -5,6 +5,9 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,44 +15,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 
-
-
-public class MainActivity extends PlusBaseActivity {
-
-    @Override
-    protected void onPlusClientRevokeAccess() {
-
-    }
-
-    @Override
-    protected void onPlusClientSignIn() {
-
-    }
-
-    @Override
-    protected void onPlusClientSignOut() {
-
-    }
-
-    @Override
-    protected void onPlusClientBlockingUI(boolean show) {
-
-    }
-
-    @Override
-    protected void updateConnectButtonState() {
-
-    }
+public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }
+
+        ViewPager pager=(ViewPager)findViewById(R.id.pager);
+        pager.setAdapter(new MenuPagerAdapter(getSupportFragmentManager()));
+
+//        if (savedInstanceState == null) {
+//            getFragmentManager().beginTransaction()
+//                    .add(R.id.container, new PlaceholderFragment())
+//                    .commit();
+//        }
     }
 
 
@@ -82,10 +62,11 @@ public class MainActivity extends PlusBaseActivity {
             case R.id.action_settings:
                 return true;
             case R.id.action_logout:
-                signOut();
-//                revokeAccess();
-                Intent i=new Intent(this, LoginActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                Intent i = new Intent(this, LoginActivity.class);
+
+                i.putExtra("LOGOUT", true);
+                //i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
                 startActivity(i);
                 finish();
                 return true;
@@ -94,19 +75,19 @@ public class MainActivity extends PlusBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-    }
+//    /**
+//     * A placeholder fragment containing a simple view.
+//     */
+//    public static class PlaceholderFragment extends Fragment {
+//
+//        public PlaceholderFragment() {
+//        }
+//
+//        @Override
+//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                Bundle savedInstanceState) {
+//            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+//            return rootView;
+//        }
+//    }
 }

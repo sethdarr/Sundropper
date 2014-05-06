@@ -108,7 +108,7 @@ public abstract class PlusBaseActivity extends Activity
      * call back to {@link #onConnected(android.os.Bundle)} or
      * {@link #onConnectionFailed(com.google.android.gms.common.ConnectionResult)}.
      */
-    private void initiatePlusClientConnect() {
+    protected void initiatePlusClientConnect() {
         if (!mPlusClient.isConnected() && !mPlusClient.isConnecting()) {
             mPlusClient.connect();
         }
@@ -118,7 +118,7 @@ public abstract class PlusBaseActivity extends Activity
      * Disconnect the {@link PlusClient} only if it is connected (otherwise, it can throw an error.)
      * This will call back to {@link #onDisconnected()}.
      */
-    private void initiatePlusClientDisconnect() {
+    protected void initiatePlusClientDisconnect() {
         if (mPlusClient.isConnected()) {
             mPlusClient.disconnect();
         }
@@ -170,13 +170,13 @@ public abstract class PlusBaseActivity extends Activity
     @Override
     protected void onStart() {
         super.onStart();
-        initiatePlusClientConnect();
+//        initiatePlusClientConnect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        initiatePlusClientDisconnect();
+//        initiatePlusClientDisconnect();
     }
 
     public boolean isPlusClientConnecting() {

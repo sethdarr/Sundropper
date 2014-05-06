@@ -41,6 +41,7 @@ public class LoginActivity extends PlusBaseActivity {
     protected void onResume() {
         super.onResume();
         InitializeLogin();
+
         updateConnectButtonState();
     }
 
@@ -52,6 +53,8 @@ public class LoginActivity extends PlusBaseActivity {
     }
 
     private void InitializeLogin() {
+
+
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
         if (supportsGooglePlayServices()) {
@@ -63,6 +66,14 @@ public class LoginActivity extends PlusBaseActivity {
                     signIn();
                 }
             });
+
+            if (getIntent().getBooleanExtra("LOGOUT", false)) {
+                signOut();
+            }
+            else if (getPlusClient().isConnected()) {
+                startActivity(new Intent(this, MainActivity.class));
+            }
+
         } else {
             // Don't offer G+ sign in if the app's version is too low to support Google Play
             // Services.
@@ -72,13 +83,21 @@ public class LoginActivity extends PlusBaseActivity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        mSignOutButtons = findViewById(R.id.plus_sign_out_buttons);
     }
 
+    @Override
+    public void onBackPressed() {
+//        if(!this.getClass().equals(LoginActivity.class)) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+//        }
+        super.onBackPressed();
+    }
 
     @Override
     protected void onPlusClientSignIn() {
-
         startActivity(new Intent(this, MainActivity.class));
     }
 
@@ -90,7 +109,6 @@ public class LoginActivity extends PlusBaseActivity {
     @Override
     protected void updateConnectButtonState() {
         boolean connected = getPlusClient().isConnected();
-        mSignOutButtons.setVisibility(connected ? View.VISIBLE : View.GONE);
         mPlusSignInButton.setVisibility(connected ? View.GONE : View.VISIBLE);
     }
 
