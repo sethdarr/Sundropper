@@ -1,11 +1,13 @@
 package com.sundropelectric.sundropper.app;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 /**
  * Created by seth.darr on 5/6/2014.
@@ -29,10 +31,38 @@ public class MenuPage extends Fragment {
 
         switch (position) {
 //            case 0: button.setBackground(getResources().getDrawable(R.drawable.Music));
-            case 0: button.setBackgroundResource(R.drawable.music); break;
-            case 1: button.setBackgroundResource(R.drawable.shows); break;
-            case 2: button.setBackgroundResource(R.drawable.artwork); break;
+            case 0: button.setBackgroundResource(R.drawable.music);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(v.getContext(), "Music!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                break;
+            case 1: button.setBackgroundResource(R.drawable.shows);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(v.getContext(), "Shows!", Toast.LENGTH_LONG).show();
+                    }
+                });
+                break;
+            case 2: button.setBackgroundResource(R.drawable.artwork);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(v.getContext(), "Artwork!", Toast.LENGTH_LONG).show();
+                    }
+                });
+                break;
             case 3: button.setBackgroundResource(R.drawable.documents);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(v.getContext(), "Documents!", Toast.LENGTH_LONG).show();
+                    }
+                });
+
         }
 
         return result;
