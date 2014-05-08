@@ -9,5 +9,8 @@
     <string name="pref_dream_text_key">pref_dream_text</string>
     <string name="pref_dream_text_default">zzzZZZzzz</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="pref_desc">Sundropper Settings</string>
+    <string name="pref_title">Display and Navigation</string>
+    <string name="last_menu_item_summary">Save the last menu option you were viewing and open to that option when re-opening the app</string>
+    <string name="last_menu_item_title">Save Last Option</string>
 </resources>

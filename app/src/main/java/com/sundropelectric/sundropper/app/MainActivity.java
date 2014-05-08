@@ -1,37 +1,42 @@
 package com.sundropelectric.sundropper.app;
 
-import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 
 public class MainActivity extends FragmentActivity {
+    private ViewPager pager = null;
+    private SharedPreferences prefs = null;
+    private static final String PREF_LAST_MENU_ITEM = "lastMenuItem";
+    private static final String PREF_SAVE_LAST_MENU_ITEM = "saveLastMenuItem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ViewPager pager=(ViewPager)findViewById(R.id.pager);
+        pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new MenuPagerAdapter(getSupportFragmentManager()));
-
-//        if (savedInstanceState == null) {
-//            getFragmentManager().beginTransaction()
-//                    .add(R.id.container, new PlaceholderFragment())
-//                    .commit();
-//        }
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.getAll();
+        if (prefs.getBoolean(PREF_SAVE_LAST_MENU_ITEM, false)) {
+            pager.setCurrentItem(prefs.getInt(PREF_LAST_MENU_ITEM, 0));
+        }
     }
 
+    @Override
+    public void onPause() {
+        if (prefs != null) {
+            int position = pager.getCurrentItem();
+            prefs.edit().putInt(PREF_LAST_MENU_ITEM, position).apply();
+        }
+        super.onPause();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,13 +65,12 @@ public class MainActivity extends FragmentActivity {
 
         switch (id){
             case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.action_logout:
                 Intent i = new Intent(this, LoginActivity.class);
-
                 i.putExtra("LOGOUT", true);
                 //i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
                 startActivity(i);
                 finish();
                 return true;
@@ -75,19 +79,4 @@ public class MainActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    /**
-//     * A placeholder fragment containing a simple view.
-//     */
-//    public static class PlaceholderFragment extends Fragment {
-//
-//        public PlaceholderFragment() {
-//        }
-//
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                Bundle savedInstanceState) {
-//            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-//            return rootView;
-//        }
-//    }
 }

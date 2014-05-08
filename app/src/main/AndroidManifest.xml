@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sundropelectric.sundropper.app" >
+    package="com.sundropelectric.sundropper.app">
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/sundrop_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name="com.sundropelectric.sundropper.app.GooglePlayServicesActivity"
-            android:label="@string/app_name" >
-        </activity>
+            android:label="@string/app_name"></activity>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -19,7 +18,7 @@
         <activity
             android:name="com.sundropelectric.sundropper.app.LoginActivity"
             android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,19 +27,22 @@
         </activity>
         <activity
             android:name="com.sundropelectric.sundropper.app.MainActivity"
-            android:label="@string/title_activity_main" >
-        </activity>
+            android:label="@string/title_activity_main"></activity>
 
         <!-- This service is only used on devices with API v17+ -->
         <service
             android:name="com.sundropelectric.sundropper.app.SundropperDreamService"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.service.dreams.DreamService" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name="com.sundropelectric.sundropper.app.SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
     <!-- To access Google+ APIs: -->
     <uses-permission android:name="android.permission.INTERNET" />

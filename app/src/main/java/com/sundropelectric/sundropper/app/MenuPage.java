@@ -1,8 +1,8 @@
 package com.sundropelectric.sundropper.app;
 
-import android.content.Context;
-import android.support.v4.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +14,7 @@ import android.widget.Toast;
  */
 public class MenuPage extends Fragment {
     private static final String KEY_POSITION = "position";
+    private SharedPreferences prefs = null;
 
     static MenuPage newInstance(int position) {
         MenuPage frag = new MenuPage();

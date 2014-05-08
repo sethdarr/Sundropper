@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="com.sundropelectric.sundropper.app.StockPreferenceFragment"
+        android:summary="@string/pref_desc"
+        android:title="@string/pref_title">
+        <extra
+            android:name="resource"
+            android:value="pref_display" />
+    </header>
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="com.sundropelectric.sundropper.app.SettingsActivity$GeneralPreferenceFragment"
+        android:title="@string/pref_header_general" />
+    <header
+        android:fragment="com.sundropelectric.sundropper.app.SettingsActivity$NotificationPreferenceFragment"
+        android:title="@string/pref_header_notifications" />
+    <header
+        android:fragment="com.sundropelectric.sundropper.app.SettingsActivity$DataSyncPreferenceFragment"
+        android:title="@string/pref_header_data_sync" />
+
+</preference-headers>
