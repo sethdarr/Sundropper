@@ -1,5 +1,6 @@
 package com.sundropelectric.sundropper.app;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -36,7 +37,7 @@ public class MenuPage extends Fragment {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(v.getContext(), "Music!", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(v.getContext(), Music.class));
                         }
                     });
                 break;
